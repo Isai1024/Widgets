@@ -1,35 +1,38 @@
 {
+    "config": {
+        "startup": true
+    },
     "ram": {
-        "x": 476,
-        "y": 81,
+        "x": 100,
+        "y": 100,
         "img": "img/ram.png",
         "enabled": true,
         "dragging": false
     },
     "cpu": {
-        "x": 475,
-        "y": 254,
+        "x": 100,
+        "y": 150,
         "img": "img/cpu.png",
         "enabled": true,
         "dragging": false
     },
     "clock": {
-        "x": 477,
-        "y": 178,
+        "x": 860,
+        "y": 100,
         "img": "img/clock.png",
         "enabled": true,
-        "dragging": false
+        "dragging": true
     },
     "tasks": {
-        "x": 166,
-        "y": 110,
+        "x": 100,
+        "y": 200,
         "img": "img/task.png",
         "enabled": true,
         "dragging": true
     },
     "EDIT": {
-        "x": 613,
-        "y": 196,
+        "x": 439,
+        "y": 392,
         "img": "",
         "enabled": true,
         "dragging": true

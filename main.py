@@ -21,8 +21,8 @@ class Overlay(QWidget):
         self.config = load_config()
         self.editing_mode = False 
 
-        screen = QApplication.primaryScreen().geometry()
-        self.setGeometry(screen)
+        self.screen = QApplication.primaryScreen().geometry()
+        self.setGeometry(self.screen)
 
         self.setWindowFlags(
             Qt.WindowType.FramelessWindowHint | 
@@ -121,6 +121,23 @@ class Overlay(QWidget):
                     widget.setWindowFlags(Qt.WindowType.Widget)
                     widget.move(pos["x"], pos["y"])
                     
+                    if name == "clock" and self.config.get("config", {}).get("startup", False):
+                        
+                        config = load_config()
+
+                        config[name] = {
+                            "x": int(self.screen.width() /2) - 100,
+                            "y": 100,
+                            "img": config.get(name, {}).get("img", "img/default.png"),
+                            "enabled": config.get(name, {}).get("enabled", True),
+                            "dragging": config.get(name, {}).get("dragging", False)
+                        }
+
+                        save_config(config)
+                        config['config'] = {"startup": False}
+                        save_config(config)    
+
+                        
                     self.widgets_list.append(widget)
                     self.available_plugins[name] = widget
                     widget.setVisible(pos.get("enabled", True))
