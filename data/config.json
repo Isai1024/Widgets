@@ -1,0 +1,37 @@
+{
+    "ram": {
+        "x": 476,
+        "y": 81,
+        "img": "img/ram.png",
+        "enabled": true,
+        "dragging": false
+    },
+    "cpu": {
+        "x": 475,
+        "y": 254,
+        "img": "img/cpu.png",
+        "enabled": true,
+        "dragging": false
+    },
+    "clock": {
+        "x": 477,
+        "y": 178,
+        "img": "img/clock.png",
+        "enabled": true,
+        "dragging": false
+    },
+    "tasks": {
+        "x": 166,
+        "y": 110,
+        "img": "img/task.png",
+        "enabled": true,
+        "dragging": true
+    },
+    "EDIT": {
+        "x": 613,
+        "y": 196,
+        "img": "",
+        "enabled": true,
+        "dragging": true
+    }
+}
