@@ -52,7 +52,7 @@ class Edit_Widget(BaseWidget):
             }
         """)
 
-        self.resize(300, 250)
+        self.resize(330, 200)
         layout = QVBoxLayout()
 
         title = QLabel("Configuración de Widgets")
@@ -82,7 +82,7 @@ class Edit_Widget(BaseWidget):
             h_layout.addWidget(Check_Enabled)
             h_layout.addWidget(Check_Dragging)
 
-            btn = QPushButton("Guardar")
+            btn = QPushButton("SAVE")
             btn.clicked.connect(lambda _, k=key, x=line_X, y=line_Y, e=Check_Enabled, d=Check_Dragging: self.save_edit(k, x, y, e, d))
             h_layout.addWidget(btn)
 

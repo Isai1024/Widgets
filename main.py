@@ -108,36 +108,39 @@ class Overlay(QWidget):
 
     def load_plugins(self):
         if not os.path.exists(FOLDER): return
+        y_offset = 100
+        __config = self.config.get("config", {})
+        
         for file in os.listdir(FOLDER):
             if file.endswith(".py") and file != "__init__.py":
                 name = file[:-3]
                 try:
                     module = importlib.import_module(f"{FOLDER}.{name}")
                     widget_class = module.Widget
-                    pos = self.config.get(name, {"x": 100, "y": 100, "enabled": True})
-                    
+
+                    if name == "clock" and __config.get("startup", False):
+                        plugin = self.config.get(name, {})
+                        
+                        self.config[name] = {
+                            "x": int(self.screen.width() /2) - 100,
+                            "y": 100,
+                            "img": plugin.get("img", f"img/{name}.png" if not plugin.get("img") else "img/default.png"),
+                            "enabled": plugin.get("enabled", True),
+                            "dragging": plugin.get("dragging", False)
+                        }
+                        self.config['config']['startup'] = False
+                                     
+                    pos = self.config.get(name, {"x": 100, "y": y_offset, "img": f"img/{name}.png", "enabled": True, "dragging": True})
+                    y_offset += 50
+
+                    self.config[name] = pos
+
                     widget = widget_class(self, pos["x"], pos["y"])
                     widget.setParent(self)
                     widget.setWindowFlags(Qt.WindowType.Widget)
                     widget.move(pos["x"], pos["y"])
                     
-                    if name == "clock" and self.config.get("config", {}).get("startup", False):
-                        
-                        config = load_config()
-
-                        config[name] = {
-                            "x": int(self.screen.width() /2) - 100,
-                            "y": 100,
-                            "img": config.get(name, {}).get("img", "img/default.png"),
-                            "enabled": config.get(name, {}).get("enabled", True),
-                            "dragging": config.get(name, {}).get("dragging", False)
-                        }
-
-                        save_config(config)
-                        config['config'] = {"startup": False}
-                        save_config(config)    
-
-                        
+                    save_config(self.config)   
                     self.widgets_list.append(widget)
                     self.available_plugins[name] = widget
                     widget.setVisible(pos.get("enabled", True))
