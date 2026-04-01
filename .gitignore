@@ -2,3 +2,5 @@ venv/
 __pycache__/
 *.pyc
 *.json
+*_fish.png
+img/*_fish.png

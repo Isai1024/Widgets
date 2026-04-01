@@ -12,6 +12,7 @@ from utils import load_config, save_config
 from config_widgets import Edit_Widget
 
 FOLDER = "widgets"
+FOLDER_IMGS = "img"
 
 class Overlay(QWidget):
     def __init__(self):
@@ -110,27 +111,46 @@ class Overlay(QWidget):
         if not os.path.exists(FOLDER): return
         y_offset = 100
         __config = self.config.get("config", {})
+        imgs = os.listdir(FOLDER_IMGS)
         
         for file in os.listdir(FOLDER):
             if file.endswith(".py") and file != "__init__.py":
                 name = file[:-3]
+
+                imgs_path = ""
+                if f"{name}.png" not in imgs:
+                    imgs_path = "img/default.png"
+                else:
+                    imgs_path = f"img/{name}.png"
+
                 try:
                     module = importlib.import_module(f"{FOLDER}.{name}")
                     widget_class = module.Widget
+                    
+                    plugin = self.config.get(name, {})
 
                     if name == "clock" and __config.get("startup", False):
-                        plugin = self.config.get(name, {})
                         
                         self.config[name] = {
-                            "x": int(self.screen.width() /2) - 100,
+                            "x": int(self.screen.width() // 2) - 100,
                             "y": 100,
-                            "img": plugin.get("img", f"img/{name}.png" if not plugin.get("img") else "img/default.png"),
+                            "img": plugin.get("img", imgs_path if not plugin.get("img") else "img/default.png"),
                             "enabled": plugin.get("enabled", True),
                             "dragging": plugin.get("dragging", False)
                         }
                         self.config['config']['startup'] = False
-                                     
-                    pos = self.config.get(name, {"x": 100, "y": y_offset, "img": f"img/{name}.png", "enabled": True, "dragging": True})
+
+                    if name == "fish_tank":
+                        
+                        self.config[name] = {
+                            "x": 0,
+                            "y": self.screen.height() - 600,
+                            "img": plugin.get("img", imgs_path if not plugin.get("img") else "img/default.png"),
+                            "enabled": plugin.get("enabled", True),
+                            "dragging": plugin.get("dragging", False)
+                        }
+
+                    pos = self.config.get(name, {"x": 100, "y": y_offset, "img": imgs_path, "enabled": True, "dragging": True})
                     y_offset += 50
 
                     self.config[name] = pos
