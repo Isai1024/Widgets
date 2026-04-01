@@ -61,6 +61,7 @@ class Edit_Widget(BaseWidget):
 
         for key, value in data.items():
             if key == "EDIT": continue
+            if key == "config": continue
 
             h_layout = QHBoxLayout()
             label = QLabel(key)
