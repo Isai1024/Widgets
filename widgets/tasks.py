@@ -9,7 +9,13 @@ TASK_DATA = "data/tasks.json"
 
 class Widget(BaseWidget):
 
-    def __init__(self, overlay, x, y):
+    __posX = 100
+    __posY = 100
+
+    __enabled = True
+    __draggable = True
+
+    def __init__(self, overlay, x = __posX, y = __posY):
         super().__init__(overlay, "tasks", x, y)
         
         self.tasks = load_config(TASK_DATA)
@@ -79,19 +85,23 @@ class Widget(BaseWidget):
         pass
 
     def handle_list_click(self, event):
-        if event.button() == Qt.MouseButton.LeftButton:
-            item = self.list.itemAt(event.pos())
-            if item:
-                menu = QMenu()
-                menu.addAction("Opciones").setEnabled(False)
-                menu.addSeparator()
+        try:
+            if event.button() == Qt.MouseButton.LeftButton:
+                item = self.list.itemAt(event.pos())
+                item.setSelected(True)
+                if item:
+                    menu = QMenu()
+                    menu.addAction("Opciones").setEnabled(False)
+                    menu.addSeparator()
 
-                action = menu.addAction("Eliminar")
-                action.setIcon(QIcon("img/delete.png") or QIcon.fromTheme("edit-delete"))
-                action.triggered.connect(lambda: self.remove_task(item))
+                    action = menu.addAction("Eliminar")
+                    action.setIcon(QIcon("img/delete.png") or QIcon.fromTheme("edit-delete"))
+                    action.triggered.connect(lambda: self.remove_task(item))
 
-                from PyQt6.QtGui import QCursor
-                menu.exec(QCursor.pos())
+                    from PyQt6.QtGui import QCursor
+                    menu.exec(QCursor.pos())
+        except Exception as e:
+            pass
 
     def load_tasks(self):
         self.list.clear()
@@ -101,6 +111,10 @@ class Widget(BaseWidget):
     def add_task(self):
         task = self.input.text().strip()
         if task:
+            if task in self.tasks:    
+                self.input.clear()
+                self.input.setFocus()
+                return
             self.list.addItem(task)
             self.input.clear()
             self.input.setFocus()
@@ -112,6 +126,16 @@ class Widget(BaseWidget):
             save_config(self.tasks, TASK_DATA)
 
     def remove_task(self, item):
-        self.list.takeItem(self.list.row(item))
+        pos = self.list.row(item)
+        self.list.takeItem(pos)
         del self.tasks[item.text()]
         save_config(self.tasks, TASK_DATA)
+    
+    def widget_pos(self):
+        return {"x": self.x(), "y": self.y()}
+    
+    def is_draggable(self):
+        return self.__draggable
+
+    def is_enabled(self):
+        return self.__enabled

@@ -62,7 +62,14 @@ class Fish(QLabel):
 
 class Widget(BaseWidget):
 
-    def __init__(self, overlay, x, y):
+    __posX = 0
+    __posY = 600
+
+    __enabled = True
+    __draggable = False
+
+    def __init__(self, overlay, x = __posX, y = __posY):
+        y = overlay.height() - self.__posY # posicionar al fondo
         super().__init__(overlay, "fish_tank", x, y)
 
         self.setAlignment(Qt.AlignmentFlag.AlignCenter)
@@ -131,6 +138,15 @@ class Widget(BaseWidget):
 
     def update_widget(self):
         pass
+    
+    def widget_pos(self):
+        return {"x": self.x(), "y": self.y()}
+
+    def is_draggable(self):
+        return self.__draggable
+
+    def is_enabled(self):
+        return self.__enabled
 
 class PaintWidget(QWidget):
 

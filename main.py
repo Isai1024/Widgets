@@ -109,8 +109,6 @@ class Overlay(QWidget):
 
     def load_plugins(self):
         if not os.path.exists(FOLDER): return
-        y_offset = 100
-        __config = self.config.get("config", {})
         imgs = os.listdir(FOLDER_IMGS)
         
         for file in os.listdir(FOLDER):
@@ -126,39 +124,18 @@ class Overlay(QWidget):
                 try:
                     module = importlib.import_module(f"{FOLDER}.{name}")
                     widget_class = module.Widget
-                    
-                    plugin = self.config.get(name, {})
 
-                    if name == "clock" and __config.get("startup", False):
-                        
-                        self.config[name] = {
-                            "x": int(self.screen.width() // 2) - 100,
-                            "y": 100,
-                            "img": plugin.get("img", imgs_path if not plugin.get("img") else "img/default.png"),
-                            "enabled": plugin.get("enabled", True),
-                            "dragging": plugin.get("dragging", False)
-                        }
-                        self.config['config']['startup'] = False
-
-                    if name == "fish_tank":
-                        
-                        self.config[name] = {
-                            "x": 0,
-                            "y": self.screen.height() - 600,
-                            "img": plugin.get("img", imgs_path if not plugin.get("img") else "img/default.png"),
-                            "enabled": plugin.get("enabled", True),
-                            "dragging": plugin.get("dragging", False)
-                        }
-
-                    pos = self.config.get(name, {"x": 100, "y": y_offset, "img": imgs_path, "enabled": True, "dragging": True})
-                    y_offset += 50
-
-                    self.config[name] = pos
-
-                    widget = widget_class(self, pos["x"], pos["y"])
+                    widget = widget_class(self)
                     widget.setParent(self)
                     widget.setWindowFlags(Qt.WindowType.Widget)
+                    widget_pos = widget.widget_pos()
+                    widget_draggable = widget.is_draggable()
+                    widget_enabled = widget.is_enabled()
+                    
+                    pos = self.config.get(name, {"x": widget_pos["x"], "y": widget_pos["y"], "img": imgs_path, "enabled": widget_enabled, "dragging": widget_draggable})                   
                     widget.move(pos["x"], pos["y"])
+
+                    self.config[name] = pos
                     
                     save_config(self.config)   
                     self.widgets_list.append(widget)
