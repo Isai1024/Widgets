@@ -2,12 +2,14 @@ import sys
 import os
 import importlib
 import json
+import psutil
+import python_weather
 from PyQt6.QtWidgets import QApplication, QWidget, QMenu, QSystemTrayIcon
 from PyQt6.QtCore import Qt, QTimer
 from PyQt6.QtGui import QIcon, QAction
 from PyQt6.QtGui import QGuiApplication
 
-from utils import load_config, save_config
+from utils import load_config, save_config, resource_path
 
 from config_widgets import Edit_Widget
 
@@ -21,6 +23,8 @@ class Overlay(QWidget):
         self.available_plugins = {}
         self.config = load_config()
         self.editing_mode = False 
+
+        print("INICIANDO OVERLAY")
 
         self.screen = QApplication.primaryScreen().geometry()
         self.setGeometry(self.screen)
@@ -43,7 +47,7 @@ class Overlay(QWidget):
         """Configura el icono al lado del reloj de Windows"""
         self.tray_icon = QSystemTrayIcon(self)
         
-        self.tray_icon.setIcon(QIcon("img/icon.png") or QIcon.fromTheme("applications-system")) 
+        self.tray_icon.setIcon(QIcon(resource_path("img/icon.png")) or QIcon.fromTheme("applications-system")) 
         
         self.tray_menu = QMenu()
         self.refresh_tray_menu()
@@ -96,7 +100,7 @@ class Overlay(QWidget):
         for name, widget in self.available_plugins.items():
             if name == "EDIT": continue
             action = QAction(name, self)
-            action.setIcon(QIcon(self.config.get(name, {}).get("img", "img/default.png")))
+            action.setIcon(QIcon(resource_path(self.config.get(name, {}).get("img", "img/default.png"))))
             action.setCheckable(True)
             action.setChecked(self.config.get(name, {}).get("enabled", True))
             action.triggered.connect(lambda checked, n=name: self.toggle_widget(n, checked))
@@ -108,18 +112,19 @@ class Overlay(QWidget):
         quit_action.triggered.connect(QApplication.instance().quit)
 
     def load_plugins(self):
-        if not os.path.exists(FOLDER): return
-        imgs = os.listdir(FOLDER_IMGS)
+        if not os.path.exists(resource_path(FOLDER)): return
+        imgs = os.listdir(resource_path(FOLDER_IMGS))
         
-        for file in os.listdir(FOLDER):
+        for file in os.listdir(resource_path(FOLDER)):
             if file.endswith(".py") and file != "__init__.py":
                 name = file[:-3]
+                print(f"Cargando widget: {name}")
 
                 imgs_path = ""
                 if f"{name}.png" not in imgs:
-                    imgs_path = "img/default.png"
+                    imgs_path = resource_path("img/default.png")
                 else:
-                    imgs_path = f"img/{name}.png"
+                    imgs_path = resource_path(f"img/{name}.png")
 
                 try:
                     module = importlib.import_module(f"{FOLDER}.{name}")

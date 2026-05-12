@@ -2,7 +2,7 @@ from PyQt6.QtWidgets import QHBoxLayout, QMenu, QLabel, QListWidget, QLineEdit, 
 from base_widget import BaseWidget
 from PyQt6.QtGui import QIcon
 from PyQt6.QtCore import Qt
-from utils import load_config, save_config
+from utils import load_config, save_config, resource_path
 import time
 
 TASK_DATA = "data/tasks.json"
@@ -95,7 +95,7 @@ class Widget(BaseWidget):
                     menu.addSeparator()
 
                     action = menu.addAction("Eliminar")
-                    action.setIcon(QIcon("img/delete.png") or QIcon.fromTheme("edit-delete"))
+                    action.setIcon(QIcon(resource_path("img/delete.png")) or QIcon.fromTheme("edit-delete"))
                     action.triggered.connect(lambda: self.remove_task(item))
 
                     from PyQt6.QtGui import QCursor

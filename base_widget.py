@@ -2,7 +2,7 @@ from PyQt6.QtWidgets import QLabel
 from PyQt6.QtGui import QFont
 from PyQt6.QtCore import Qt
 
-from utils import load_config, save_config
+from utils import load_config, save_config, resource_path
 
 class BaseWidget(QLabel):
 
@@ -43,7 +43,7 @@ class BaseWidget(QLabel):
 
         self.overlay.config[self.name]["x"] = pos.x()
         self.overlay.config[self.name]["y"] = pos.y()
-        self.overlay.config[self.name]["img"] = self.CONFIG.get("img", "img/default.png")
+        self.overlay.config[self.name]["img"] = resource_path(self.CONFIG.get("img", "img/default.png"))
         self.overlay.config[self.name]["enabled"] = self.isVisible()
         self.overlay.config[self.name]["dragging"] = self.CONFIG.get("dragging", False)
 

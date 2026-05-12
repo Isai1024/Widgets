@@ -6,7 +6,9 @@ from PyQt6.QtCore import QTimer, Qt, QPoint, pyqtSignal
 from PyQt6.QtGui import QPixmap, QPainter, QFont, QPen, QTransform
 import math, os
 
-FOLDER_IMGS = "./img"
+from utils import resource_path
+
+FOLDER_IMGS = resource_path("./img")
 
 class Fish(QLabel):
 
@@ -121,13 +123,13 @@ class Widget(BaseWidget):
         only_fish = [img for img in imgs if img.endswith("_fish.png")]
 
         if fish_id is not None and f"{fish_id}_fish.png" in only_fish:
-            path = os.path.join(FOLDER_IMGS, f"{fish_id}_fish.png")
+            path = resource_path(os.path.join(FOLDER_IMGS, f"{fish_id}_fish.png"))
             base_y = random.randint(50, 550)
             speed = random.uniform(1, 4)
             self.add_fish(path, speed, base_y)  
         else:
             for fish in only_fish:
-                path = os.path.join(FOLDER_IMGS, fish)
+                path = resource_path(os.path.join(FOLDER_IMGS, fish))
                 base_y = random.randint(50, 550)
                 speed = random.uniform(1, 4)
                 self.add_fish(path, speed, base_y)
@@ -246,7 +248,7 @@ class Window(QWidget):
             self.paint.pen_color = color
 
     def save_image(self):
-        path = f"./img/{self.id}_fish.png"
+        path = resource_path(f"./img/{self.id}_fish.png")
         self.paint.pixmap.save(path)
 
         self.fish_saved.emit(self.id)

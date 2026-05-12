@@ -4,7 +4,7 @@ from PyQt6.QtWidgets import (QApplication, QCheckBox, QLabel, QWidget, QVBoxLayo
 from base_widget import BaseWidget
 from PyQt6.QtCore import Qt
 
-from utils import load_config, save_config
+from utils import load_config, resource_path, save_config
 
 class Edit_Widget(BaseWidget):
     def __init__(self, overlay, x, y):
@@ -101,7 +101,7 @@ class Edit_Widget(BaseWidget):
             config[key] = {
                 "x": int(line_X.text()),
                 "y": int(line_Y.text()),
-                "img": config.get(key, {}).get("img", "img/default.png"),
+                "img": resource_path(config.get(key, {}).get("img", "img/default.png")),
                 "enabled": Check_Enabled.isChecked(),
                 "dragging": Check_Dragging.isChecked()
             }
